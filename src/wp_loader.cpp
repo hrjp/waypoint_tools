@@ -1,0 +1,2 @@
+//wpをcsvから読み込んでpathとmarkerarrayで配信する
+//waypoint/nowにあわせてmarkerの色を変える

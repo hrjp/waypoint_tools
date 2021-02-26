@@ -155,7 +155,8 @@ include_directories(
 #############
 ## Install ##
 #############
-
+add_executable(wp_loader src/wp_loader.cpp)
+target_link_libraries(wp_loader ${catkin_LIBRARIES})
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 

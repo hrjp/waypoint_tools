@@ -1,6 +1,10 @@
-//WayPointData(wpdata.csv) to nav_msgs/Path and Vector
-//2020.7.25
-//Shunya Hara
+/**
+* @file CSVtoPath.h
+* @brief Flexible pose calculating class
+* @author Shunya Hara
+* @date 2021.2.26
+* @details WayPointData(wpdata.csv) to nav_msgs/Path and Vector
+*/
 
 #pragma once
 #include <iostream>
@@ -18,14 +22,14 @@ class CSVtoPath{
     std::vector<std::vector<std::string> > Score;
     double geometry_quat_getyaw(geometry_msgs::Quaternion geometry_quat);
     public:
-    CSVtoPath(std::string& st,nav_msgs::Path& path);
+    CSVtoPath(std::string& st,nav_msgs::Path& path,std::string& map_frame);
      
 };
 
 
 
 
-CSVtoPath::CSVtoPath(std::string& st,nav_msgs::Path& path):Score(1,std::vector<std::string>(1)){
+CSVtoPath::CSVtoPath(std::string& st,nav_msgs::Path& path,std::string& map_frame):Score(1,std::vector<std::string>(1)){
     using namespace std;
     ifstream ifs(st.c_str());
     // 開かなかったらエラー
@@ -67,11 +71,11 @@ CSVtoPath::CSVtoPath(std::string& st,nav_msgs::Path& path):Score(1,std::vector<s
         pose.pose.orientation.y=atof(Score.at(k).at(5).c_str());
         pose.pose.orientation.z=atof(Score.at(k).at(6).c_str());
         pose.pose.orientation.w=atof(Score.at(k).at(7).c_str());
-        pose.header.frame_id="map";
+        pose.header.frame_id=map_frame;
         pose.header.stamp=ros::Time::now();
         path.poses.push_back(pose);
      }
-     path.header.frame_id="map";
+     path.header.frame_id=map_frame;
      path.header.stamp=ros::Time::now();
      ifs.close();
 

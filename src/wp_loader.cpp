@@ -7,7 +7,6 @@
 *          waypoint/nowにあわせてmarkerの色を変える
 */
 
-
 #include <ros/ros.h>
 #include <nav_msgs/Path.h>
 #include <visualization_msgs/MarkerArray.h>
@@ -18,7 +17,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "CSVtoPath.h"
+#include <waypoint_tools/CSVtoPath.h>
 
 using namespace std;
 

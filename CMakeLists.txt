@@ -105,12 +105,11 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES waypoint_tools
-#  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES waypoint_tools
+  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf
+  DEPENDS system_lib
 )
-
 ###########
 ## Build ##
 ###########
@@ -118,7 +117,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -158,13 +157,13 @@ include_directories(
 add_executable(wp_loader src/wp_loader.cpp)
 target_link_libraries(wp_loader ${catkin_LIBRARIES})
 
-add_executable(3d_initial_pose src/3d_initial_pose.cpp)
-target_link_libraries(3d_initial_pose ${catkin_LIBRARIES})
+#add_executable(3d_initial_pose src/3d_initial_pose.cpp)
+#target_link_libraries(3d_initial_pose ${catkin_LIBRARIES})
 
 add_executable(path_number src/path_number.cpp)
 target_link_libraries(path_number ${catkin_LIBRARIES})
 
-
+set(HEADERS include/waypoint_tools/CSVtoPath.h)
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 

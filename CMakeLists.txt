@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(waypoint_tools)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -157,13 +157,22 @@ include_directories(
 add_executable(wp_loader src/wp_loader.cpp)
 target_link_libraries(wp_loader ${catkin_LIBRARIES})
 
+add_executable(wp_tracer src/wp_tracer.cpp)
+target_link_libraries(wp_tracer ${catkin_LIBRARIES})
+
 #add_executable(3d_initial_pose src/3d_initial_pose.cpp)
 #target_link_libraries(3d_initial_pose ${catkin_LIBRARIES})
 
 add_executable(path_number src/path_number.cpp)
 target_link_libraries(path_number ${catkin_LIBRARIES})
 
+add_executable(tf_broadcast_test src/tf_broadcast_test.cpp)
+target_link_libraries(tf_broadcast_test ${catkin_LIBRARIES})
+
 set(HEADERS include/waypoint_tools/CSVtoPath.h)
+set(HEADERS include/waypoint_tools/TFtoPose.h)
+set(HEADERS include/waypoint_tools/FlexPose.h)
+set(HEADERS include/waypoint_tools/button_status.h)
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 

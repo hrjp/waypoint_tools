@@ -19,8 +19,7 @@ predata.drop(predata.columns[[0]], axis=1,inplace=True)
 predata.to_csv('~/catkin_ws/src/kcctslam/config/waypointdata/wpdata'+tstr+".csv")
 
 df=pd.DataFrame(columns=['x', 'y','z','qx','qy','qz','qw','type','map'])
-#pub = rospy.Publisher("waypoint", Marker, queue_size = 10)
-#pub1 = rospy.Publisher("waypoint1", Marker, queue_size = 10)
+
 i=0
 map_num=0
 path=Path

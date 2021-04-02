@@ -11,6 +11,7 @@
 #include <nav_msgs/Path.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Int32MultiArray.h>
 
 #include <iostream>
 #include <string>
@@ -38,13 +39,17 @@ int main(int argc, char **argv){
     pn.param<string>("map_frame",map_frame,"map");
 
     nav_msgs::Path path;
-    CSVtoPath csv(filename,path,map_frame);
+    std_msgs::Int32MultiArray type;
+    CSVtoPath csv(filename,path,type,map_frame);
     
     //Path publisher
     ros::Publisher path_pub=n.advertise<nav_msgs::Path>("waypoint/path", 1);
 
+    //type publisher
+    ros::Publisher type_pub=n.advertise<std_msgs::Int32MultiArray>("waypoint/type", 1);
+
     while (n.ok())  {
-        
+        type_pub.publish(type);
         path_pub.publish(path);
 
         ros::spinOnce();//subsucriberの割り込み関数はこの段階で実装される

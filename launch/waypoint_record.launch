@@ -4,5 +4,5 @@
         <param name="waypoint_pitch" value="1.0"/>
     </node>
     <node name="path_number" pkg="waypoint_tools" type="path_number" output="screen"/>
-    <node name="tf_test" pkg="waypoint_tools" type="tf_broadcast_test" output="screen"/>
+    <node name="wp_record" pkg="waypoint_tools" type="wp_recorder.py" output="screen"/>
 </launch>

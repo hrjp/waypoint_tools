@@ -16,20 +16,22 @@
 #include <nav_msgs/Path.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
+#include <std_msgs/Int32MultiArray.h>
+
 
 class CSVtoPath{
     private:
     std::vector<std::vector<std::string> > Score;
     double geometry_quat_getyaw(geometry_msgs::Quaternion geometry_quat);
     public:
-    CSVtoPath(std::string& st,nav_msgs::Path& path,std::string& map_frame);
+    CSVtoPath(std::string& st,nav_msgs::Path& path,std_msgs::Int32MultiArray& type,std::string& map_frame);
      
 };
 
 
 
 
-CSVtoPath::CSVtoPath(std::string& st,nav_msgs::Path& path,std::string& map_frame):Score(1,std::vector<std::string>(1)){
+CSVtoPath::CSVtoPath(std::string& st,nav_msgs::Path& path,std_msgs::Int32MultiArray& type,std::string& map_frame):Score(1,std::vector<std::string>(1)){
     using namespace std;
     ifstream ifs(st.c_str());
     // 開かなかったらエラー
@@ -73,6 +75,7 @@ CSVtoPath::CSVtoPath(std::string& st,nav_msgs::Path& path,std::string& map_frame
         pose.pose.orientation.w=atof(Score.at(k).at(7).c_str());
         pose.header.frame_id=map_frame;
         pose.header.stamp=ros::Time::now();
+        type.data.push_back(atof(Score.at(k).at(8).c_str()));
         path.poses.push_back(pose);
      }
      path.header.frame_id=map_frame;

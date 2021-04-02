@@ -32,7 +32,7 @@ std_msgs::ColorRGBA setColor(double r,double g,double b,double a){
 }
 
 std_msgs::ColorRGBA black_color=setColor(0.0,0.0,0.0,1.0);
-std_msgs::ColorRGBA gray_color=setColor(0.0,0.0,0.0,0.2);
+std_msgs::ColorRGBA gray_color=setColor(0.3,0.3,0.3,1.0);
 std_msgs::ColorRGBA blue_color=setColor(0.0,0.0,1.0,1.0);
 
 int now_wp=0;

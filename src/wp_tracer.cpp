@@ -68,6 +68,7 @@ int main(int argc, char **argv){
 
         auto nowpos=FlexPose(now_position.toPoseStamped());
         path.header=nowpos.toPoseStamped().header;
+        ROS_INFO("x %f, y %f",nowpos.toPose().position.x,nowpos.toPose().position.y);
         //waypointの記録をスタート
         if(button_status==buttons_status_start){
             trace_mode=true;

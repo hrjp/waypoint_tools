@@ -50,6 +50,7 @@ TFtoPose::TFtoPose(std::string base_id, std::string child_id, double rate) : nh_
       {
         tfstamped = tfBuffer_.lookupTransform(base_id, child_id, ros::Time(0));
         posestamped.header=tfstamped.header;
+        posestamped.header.frame_id=base_id;
         posestamped.pose.position.x=tfstamped.transform.translation.x;
         posestamped.pose.position.y=tfstamped.transform.translation.y;
         posestamped.pose.position.z=tfstamped.transform.translation.z;

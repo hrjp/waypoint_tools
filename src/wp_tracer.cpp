@@ -68,7 +68,6 @@ int main(int argc, char **argv){
 
         auto nowpos=FlexPose(now_position.toPoseStamped());
         path.header=nowpos.toPoseStamped().header;
-
         //waypointの記録をスタート
         if(button_status==buttons_status_start){
             trace_mode=true;
@@ -102,7 +101,7 @@ int main(int argc, char **argv){
         std_msgs::Int32 nowwp;
         nowwp.data=path.poses.size()-1;
         nowwp_pub.publish(nowwp);
-
+        path.header.frame_id=map_id;
         path_pub.publish(path);
         
         button_status=buttons_status_free;

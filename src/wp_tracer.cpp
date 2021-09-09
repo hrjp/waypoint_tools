@@ -35,7 +35,8 @@ int main(int argc, char **argv){
 
     //param setting
     ros::NodeHandle pn("~");
-    string map_id,baselink_id;
+    string map_id="map";
+    string baselink_id="base_link";
     double wp_pitch=1.0;
     double looprate=10.0;
     pn.param<string>("map_frame_id",map_id,"map");

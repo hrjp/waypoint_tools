@@ -26,7 +26,7 @@ none
 
 
 ## wp_control
-pathを受けっとってそれをなぞって走行する
+外部から操作によるnow way pointの更新を管理
 ### publisher
 * waypoint/set [std_msgs::Int32]
 * /initialpose [geometry_msgs::PoseWithCovarianceStamped]

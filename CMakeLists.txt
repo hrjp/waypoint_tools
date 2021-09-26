@@ -172,6 +172,9 @@ target_link_libraries(tf_broadcast_test ${catkin_LIBRARIES})
 add_executable(wp_control src/wp_control.cpp)
 target_link_libraries(wp_control ${catkin_LIBRARIES})
 
+add_executable(wp_select src/wp_select.cpp)
+target_link_libraries(wp_select ${catkin_LIBRARIES})
+
 set(HEADERS include/waypoint_tools/CSVtoPath.h)
 set(HEADERS include/waypoint_tools/TFtoPose.h)
 set(HEADERS include/waypoint_tools/FlexPose.h)

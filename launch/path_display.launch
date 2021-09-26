@@ -1,6 +1,8 @@
 <launch>
+	<arg name="wayFile" default="wpdata.csv"/>
+
 	<node name="wp_loader" pkg="waypoint_tools" type="wp_loader" output="screen">
-    <param name="waypointfile" type="str" value="$(find kcctcore)/config/waypointdata/wpdata.csv" />
+    <param name="waypointfile" type="str" value="$(find kcctcore)/config/waypointdata/$(arg wayFile)" />
 	</node>
 	<node name="path_number" pkg="waypoint_tools" type="path_number" output="screen"/>
 	<node name="wp_control" pkg="waypoint_tools" type="wp_control" output="screen"/>

@@ -15,6 +15,7 @@
 #include <string>
 #include "waypoint_tools/TFtoPose.h"
 #include "waypoint_tools/button_status.h"
+#include "waypoint_tools/robot_status.h"
 
 //poseStamp間の距離
 double poseStampDistance(const geometry_msgs::PoseStamped& pose1, const geometry_msgs::PoseStamped& pose2)
@@ -79,14 +80,14 @@ int main(int argc, char** argv)
     ros::Subscriber buttons_sub = nh.subscribe("buttons", 50, buttons_callback);
     ros::Publisher nowWp_pub = nh.advertise<std_msgs::Int32>("waypoint/now", 10);
     ros::Publisher nowPos_pub = nh.advertise<geometry_msgs::PoseStamped>("nowWpPose", 10);
-    ros::Publisher mode_pub = nh.advertise<std_msgs::Int32>("mode_select/mode", 10);
+    ros::Publisher mode_pub = nh.advertise<std_msgs::String>("mode_select/mode", 10);
 
     ros::Rate loop_rate(rate);
 
     bool trace_wp_mode = true;
 
-    std_msgs::Int32 mode;
-    mode.data = static_cast<int>(robot_status::angleAdjust);
+    std_msgs::String mode;
+    mode.data = STR(robot_status::angleAdjust);
 
     bool isReach = false;
 

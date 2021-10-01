@@ -9,6 +9,7 @@
 #include <ros/ros.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Pose.h>
 #include <nav_msgs/Path.h>
@@ -50,6 +51,19 @@ void path_callback(const nav_msgs::Path path_message)
     path = path_message;
 }
 
+bool isSuccessPlanning;
+int failedPlanCount = 0;
+void successPlan_callback(const std_msgs::Bool successPlan_message)
+{
+    isSuccessPlanning = successPlan_message.data;
+
+    if(!(isSuccessPlanning)){
+        failedPlanCount++;
+    }else{
+        failedPlanCount = 0;
+    }
+}
+
 int button_clicked=0;
 void buttons_callback(const std_msgs::Int32 sub_buttons){
     button_clicked=sub_buttons.data;
@@ -76,6 +90,7 @@ int main(int argc, char** argv)
 
     ros::Subscriber set_wp_sub = nh.subscribe("waypoint/set", 50, set_wp_callback);
     ros::Subscriber path_sub = nh.subscribe("path", 50, path_callback);
+    ros::Subscriber successPlan_sub = nh.subscribe("successPlan", 10, successPlan_callback);
     //rviz control panel subscliber
     ros::Subscriber buttons_sub = nh.subscribe("buttons", 50, buttons_callback);
     ros::Publisher nowWp_pub = nh.advertise<std_msgs::Int32>("waypoint/now", 10);
@@ -87,7 +102,7 @@ int main(int argc, char** argv)
     bool trace_wp_mode = true;
 
     std_msgs::String mode;
-    mode.data = STR(robot_status::angleAdjust);
+    mode.data =  robot_status_str(robot_status::angleAdjust);
 
     bool isReach = false;
 
@@ -106,6 +121,13 @@ int main(int argc, char** argv)
                         break;
                     }
                     now_wp.data++;
+                }
+            }
+
+            if(failedPlanCount>2){
+                if(!(now_wp.data >= (path.poses.size()-1))){
+                    //now_wp.data++;
+                    failedPlanCount = 0;
                 }
             }
 

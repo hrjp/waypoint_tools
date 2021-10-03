@@ -51,17 +51,11 @@ void path_callback(const nav_msgs::Path path_message)
     path = path_message;
 }
 
-bool isSuccessPlanning;
+bool isSuccessPlanning = true;
 int failedPlanCount = 0;
 void successPlan_callback(const std_msgs::Bool successPlan_message)
 {
     isSuccessPlanning = successPlan_message.data;
-
-    if(!(isSuccessPlanning)){
-        failedPlanCount++;
-    }else{
-        failedPlanCount = 0;
-    }
 }
 
 int button_clicked=0;
@@ -124,18 +118,19 @@ int main(int argc, char** argv)
                 }
             }
 
-            if(failedPlanCount>2){
-                if(!(now_wp.data >= (path.poses.size()-1))){
-                    //now_wp.data++;
-                    failedPlanCount = 0;
-                }
+            //if planning fail, increase the target deviation
+            double fin_tar_deviation_;
+            if(isSuccessPlanning){
+                fin_tar_deviation_ = fin_tar_deviation;
+            }else{
+                fin_tar_deviation_ = 2 * fin_tar_deviation;
             }
 
             if(now_wp.data >= (path.poses.size()-1)){
                 //distance
                 if(!isReach){
                     //reach last wp point
-                    if(poseStampDistance(path.poses[now_wp.data], now_position.toPoseStamped()) <= fin_tar_deviation){
+                    if(poseStampDistance(path.poses[now_wp.data], now_position.toPoseStamped()) <= fin_tar_deviation_){
                         isReach = true;
                         mode_pub.publish(mode);
                     }

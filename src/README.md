@@ -62,3 +62,22 @@ startボタンがおされたらmap->base_linkの距離を監視して決めら�
 * base_link_frame_id [string] (default : base_link)
 * waypoint_pitch [double] (default : 1.0)
 * loop_rate [double] (default : 10.0)
+
+## wp_select
+位置情報からpublishするtarget way pointとなるpose を選ぶ
+### publisher
+* nowWpPose [geometry_msgs::PoseStamped]
+* waypoint/now [std_msgs::Int32]
+* mode_select/mode [std_msgs::String]
+### subscriber
+* waypoint/set [std_msgs::Int32]
+* path [nav_msgs::Path]
+* successPlan [std_msgs::Bool]
+* buttons [std_msgs::Int32]
+### parameter
+* map_frame_id [string] (default : map)
+* base_link_frame_id [string] (default : base_link)
+* loop_rate [double] (default : 10.0)
+* target_deviation [double] (default : 0.5)
+* final_target_deviation [double] (default : 0.1)
+* maxVelocity [double] (default : 1.0)

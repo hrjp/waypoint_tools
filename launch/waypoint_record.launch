@@ -1,8 +1,12 @@
 
 <launch>
+    <arg name="wp_dir" default="$(find kcctcore)/config/waypointdata/"/>
+
     <node name="wp_tracer" pkg="waypoint_tools" type="wp_tracer" output="screen">
         <param name="waypoint_pitch" value="1.0"/>
     </node>
     <node name="path_number" pkg="waypoint_tools" type="path_number" output="screen"/>
-    <node name="wp_record" pkg="waypoint_tools" type="wp_recorder.py" output="screen"/>
+    <node name="wp_record" pkg="waypoint_tools" type="wp_recorder.py" output="screen">
+        <param name="wp_dir" value="$(arg wp_dir)"/>
+    </node>
 </launch>

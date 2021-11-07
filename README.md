@@ -1,6 +1,8 @@
 # waypoint_tools
 waypointの読み書きなどwaypointに関連するノード全般
 
+#### waypoint marking
+![waypoint](image/waypoint_tools_waypoint.png)
 
 
 ---

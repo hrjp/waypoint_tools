@@ -85,12 +85,12 @@ int main(int argc, char **argv){
     ros::Subscriber buttons_sub = lSubscriber.subscribe("buttons", 50, buttons_callback);
 
     //3D pose の共分散
-    pubpose.pose.covariance[0]=0.25*10.0;
-    pubpose.pose.covariance[7]=0.25*10.0;
-    pubpose.pose.covariance[14]=0.25*2.0;
-    pubpose.pose.covariance[21]=0.0*0.06853891945200942/4.0;
-    pubpose.pose.covariance[28]=0.0*0.06853891945200942/4.0;
-    pubpose.pose.covariance[35]=0.01;//6853891945200942/3.0;
+    pubpose.pose.covariance[0]=4.0;
+    pubpose.pose.covariance[7]=4.0;
+    pubpose.pose.covariance[14]=0.5;
+    pubpose.pose.covariance[21]=0.0;
+    pubpose.pose.covariance[28]=0.0;
+    pubpose.pose.covariance[35]=0.001;//6853891945200942/3.0;
     int a;
 
     ros::spin();

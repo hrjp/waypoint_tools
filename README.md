@@ -1,3 +1,7 @@
+![license](https://img.shields.io/github/license/hrjp/waypoint_tools)
+![size](https://img.shields.io/github/repo-size/hrjp/waypoint_tools)
+![commit](https://img.shields.io/github/last-commit/hrjp/waypoint_tools/main)
+
 # waypoint_tools
 waypointの読み書きなどwaypointに関連するノード全般
 

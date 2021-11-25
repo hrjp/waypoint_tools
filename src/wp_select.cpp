@@ -13,10 +13,12 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Pose.h>
 #include <nav_msgs/Path.h>
+#include <std_msgs/Int32MultiArray.h>
 #include <string>
 #include "waypoint_tools/TFtoPose.h"
 #include "waypoint_tools/button_status.h"
 #include "waypoint_tools/robot_status.h"
+#include "waypoint_tools/waypoint_type.h"
 
 //poseStamp間の距離
 double poseStampDistance(const geometry_msgs::PoseStamped& pose1, const geometry_msgs::PoseStamped& pose2)
@@ -51,6 +53,12 @@ void path_callback(const nav_msgs::Path path_message)
     path = path_message;
 }
 
+std_msgs::Int32MultiArray wptype;
+void waypoint_type_callback(const std_msgs::Int32MultiArray type_message)
+{
+    wptype=type_message;
+}
+
 bool isSuccessPlanning = true;
 int failedPlanCount = 0;
 void successPlan_callback(const std_msgs::Bool successPlan_message)
@@ -75,21 +83,26 @@ int main(int argc, char** argv)
     double target_deviation, fin_tar_deviation;
     pnh.param<double>("target_deviation", target_deviation, 0.5);
     pnh.param<double>("final_target_deviation", fin_tar_deviation, 0.1);
+    double precision_tar_deviation;
+    pnh.param<double>("precision_target_deviation", precision_tar_deviation, 0.3);
     double rate;
     pnh.param<double>("loop_rate", rate, 100);
-    double maxVelocity;
-    pnh.param<double>("maxVelocity", maxVelocity, 1.0);
+    //double maxVelocity;
+    //pnh.param<double>("maxVelocity", maxVelocity, 1.0);
 
     TFtoPose now_position(map_id, base_link_id, rate);
 
     ros::Subscriber set_wp_sub = nh.subscribe("waypoint/set", 50, set_wp_callback);
     ros::Subscriber path_sub = nh.subscribe("path", 50, path_callback);
     ros::Subscriber successPlan_sub = nh.subscribe("successPlan", 10, successPlan_callback);
+    ros::Subscriber waypoint_type_sub = nh.subscribe("waypoint/type", 10, waypoint_type_callback);
+
     //rviz control panel subscliber
     ros::Subscriber buttons_sub = nh.subscribe("buttons", 50, buttons_callback);
     ros::Publisher nowWp_pub = nh.advertise<std_msgs::Int32>("waypoint/now", 10);
     ros::Publisher nowPos_pub = nh.advertise<geometry_msgs::PoseStamped>("nowWpPose", 10);
     ros::Publisher mode_pub = nh.advertise<std_msgs::String>("mode_select/mode", 10);
+    ros::Publisher type_pub = nh.advertise<std_msgs::String>("waypoint/now_type", 10);
 
     ros::Rate loop_rate(rate);
 
@@ -105,16 +118,26 @@ int main(int argc, char** argv)
     geometry_msgs::PoseStamped nowPos;
     while(ros::ok())
     {
-        if(path.poses.size()>0){
+        if(path.poses.size()>0 && wptype.data.size()>0){
             if(trace_wp_mode){
-                //target_deviationになるよう target way pointの更新
-                while(!(poseStampDistance(path.poses[now_wp.data], now_position.toPoseStamped()) >= target_deviation))
+                while(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::skip)){
+                    now_wp.data++;
+                }
+                //waypointの追従を精密にするときはprecision, その他はnormal
+                double using_target_deviation=target_deviation;
+                if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::normal)){using_target_deviation=target_deviation;}
+                if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::precision)){using_target_deviation=precision_tar_deviation;}
+
+                /*target_deviationになるよう target way pointの更新*/
+                while(!(poseStampDistance(path.poses[now_wp.data], now_position.toPoseStamped()) >= using_target_deviation))
                 {
                     //end point
                     if(now_wp.data >= (path.poses.size()-1)){
                         break;
                     }
                     now_wp.data++;
+                    if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::normal)){using_target_deviation=target_deviation;}
+                    if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::precision)){using_target_deviation=precision_tar_deviation;}
                 }
             }
 
@@ -149,6 +172,9 @@ int main(int argc, char** argv)
             nowPos_pub.publish(nowPos);
             nowWp_pub.publish(now_wp);
 
+            std_msgs::String now_type;
+            now_type.data=waypoint_type_str(static_cast<waypoint_type>(wptype.data[now_wp.data]));
+            type_pub.publish(now_type);
         }
 
         ros::spinOnce();

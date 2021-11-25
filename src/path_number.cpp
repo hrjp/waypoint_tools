@@ -12,12 +12,14 @@
 #include <nav_msgs/Path.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Int32MultiArray.h>
 
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
 
+#include "waypoint_tools/waypoint_type.h"
 
 using namespace std;
 
@@ -34,6 +36,7 @@ std_msgs::ColorRGBA setColor(double r,double g,double b,double a){
 std_msgs::ColorRGBA black_color=setColor(0.0,0.0,0.0,1.0);
 std_msgs::ColorRGBA gray_color=setColor(0.3,0.3,0.3,1.0);
 std_msgs::ColorRGBA blue_color=setColor(0.0,0.0,1.0,1.0);
+std_msgs::ColorRGBA yellow_color=setColor(1.0,1.0,0.0,1.0);
 
 int now_wp=0;
 void now_wp_callback(const std_msgs::Int32& now_wp_){
@@ -45,35 +48,62 @@ void path_callback(const nav_msgs::Path& path_){
     path=path_;
 }
 
+std_msgs::Int32MultiArray wptype;
+void waypoint_type_callback(const std_msgs::Int32MultiArray type_message)
+{
+    wptype=type_message;
+}
+
 //pathからwaypoint numberのマーカーを生成
-visualization_msgs::MarkerArray generatePathNumber(const nav_msgs::Path& path,int now_wp){
+visualization_msgs::MarkerArray generatePathNumber(const nav_msgs::Path& path,int now_wp,const std_msgs::Int32MultiArray& wptype){
     //number text size
     const double text_size=1.0;
     //number z clearance
     const double clearamce_z=1.0;
     visualization_msgs::MarkerArray marker_array;
-    for(int i=0;i<path.poses.size();i++){
-        visualization_msgs::Marker marker;
-        marker.header.frame_id=path.header.frame_id;
-        marker.header.stamp=ros::Time::now();
-        marker.ns = "waypoint_marker";
-        marker.id=i;
-        marker.lifetime = ros::Duration();
-        marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-        marker.action = visualization_msgs::Marker::ADD;
-        marker.scale.x=text_size;
-        marker.scale.y=text_size;
-        marker.scale.z=text_size;
-        marker.pose=path.poses.at(i).pose;
-        marker.pose.position.z+=clearamce_z;
-        ostringstream oss;
-        oss<<i;
-        marker.text= oss.str().c_str();
-        if(now_wp<i){marker.color=black_color;}
-        if(now_wp==i){marker.color=blue_color;}
-        if(now_wp>i){marker.color=gray_color;}
-        
-        marker_array.markers.push_back(marker);
+    if(path.poses.size()>0){
+        for(int i=0;i<path.poses.size();i++){
+            visualization_msgs::Marker marker;
+            marker.header.frame_id=path.header.frame_id;
+            marker.header.stamp=ros::Time::now();
+            marker.ns = "waypoint_marker";
+            marker.id=i;
+            marker.lifetime = ros::Duration();
+            marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+            marker.action = visualization_msgs::Marker::ADD;
+            marker.scale.x=text_size;
+            marker.scale.y=text_size;
+            marker.scale.z=text_size;
+            marker.pose=path.poses.at(i).pose;
+            marker.pose.position.z+=clearamce_z;
+            ostringstream oss;
+            oss<<i;
+            marker.text= oss.str().c_str();
+            if(wptype.data.size()>0){
+                if(now_wp<i){
+                    switch(wptype.data[i]){
+                        case static_cast<int>(waypoint_type::normal):
+                            marker.color=black_color;
+                        break;
+                        case static_cast<int>(waypoint_type::precision):
+                            marker.color=yellow_color;
+                        break;
+                        case static_cast<int>(waypoint_type::skip):
+                            marker.color=gray_color;
+                        break;
+                    }
+                }
+                
+            }
+            else{
+                if(now_wp<i){marker.color=black_color;}
+            }
+
+            if(now_wp==i){marker.color=blue_color;}
+            if(now_wp>i){marker.color=gray_color;}
+            
+            marker_array.markers.push_back(marker);
+        }
     }
     return marker_array;
 }
@@ -98,9 +128,10 @@ int main(int argc, char **argv){
     //waypoint/path subscliber
     ros::Subscriber path_sub = lSubscriber.subscribe("waypoint/path", 50, path_callback);
 
+    ros::Subscriber waypoint_type_sub = lSubscriber.subscribe("waypoint/type", 10, waypoint_type_callback);
     while (n.ok())  {
 
-        visualization_msgs::MarkerArray marker_array=generatePathNumber(path,now_wp);
+        visualization_msgs::MarkerArray marker_array=generatePathNumber(path,now_wp,wptype);
 
         marker_pub.publish(marker_array);
 

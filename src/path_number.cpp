@@ -37,6 +37,8 @@ std_msgs::ColorRGBA black_color=setColor(0.0,0.0,0.0,1.0);
 std_msgs::ColorRGBA gray_color=setColor(0.3,0.3,0.3,1.0);
 std_msgs::ColorRGBA blue_color=setColor(0.0,0.0,1.0,1.0);
 std_msgs::ColorRGBA yellow_color=setColor(1.0,1.0,0.0,1.0);
+std_msgs::ColorRGBA red_color=setColor(1.0,0.0,0.0,1.0);
+
 
 int now_wp=0;
 void now_wp_callback(const std_msgs::Int32& now_wp_){
@@ -90,6 +92,9 @@ visualization_msgs::MarkerArray generatePathNumber(const nav_msgs::Path& path,in
                         break;
                         case static_cast<int>(waypoint_type::skip):
                             marker.color=gray_color;
+                        break;
+                        case static_cast<int>(waypoint_type::person_detection):
+                            marker.color=red_color;
                         break;
                     }
                 }

@@ -125,19 +125,24 @@ int main(int argc, char** argv)
                 }
                 //waypointの追従を精密にするときはprecision, その他はnormal
                 double using_target_deviation=target_deviation;
-                if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::normal)){using_target_deviation=target_deviation;}
+                using_target_deviation=target_deviation;
                 if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::precision)){using_target_deviation=precision_tar_deviation;}
+                if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::person_detection)){using_target_deviation=precision_tar_deviation;}
+
 
                 /*target_deviationになるよう target way pointの更新*/
-                while(!(poseStampDistance(path.poses[now_wp.data], now_position.toPoseStamped()) >= using_target_deviation))
+                if(!(poseStampDistance(path.poses[now_wp.data], now_position.toPoseStamped()) >= using_target_deviation))
                 {
                     //end point
                     if(now_wp.data >= (path.poses.size()-1)){
-                        break;
+                        
                     }
-                    now_wp.data++;
-                    if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::normal)){using_target_deviation=target_deviation;}
-                    if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::precision)){using_target_deviation=precision_tar_deviation;}
+                    else{
+                        now_wp.data++;
+                        using_target_deviation=target_deviation;
+                        if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::precision)){using_target_deviation=precision_tar_deviation;}
+                        if(wptype.data[now_wp.data]==static_cast<int>(waypoint_type::person_detection)){using_target_deviation=precision_tar_deviation;}
+                    }
                 }
             }
 

@@ -179,6 +179,7 @@ set(HEADERS include/waypoint_tools/CSVtoPath.h)
 set(HEADERS include/waypoint_tools/TFtoPose.h)
 set(HEADERS include/waypoint_tools/FlexPose.h)
 set(HEADERS include/waypoint_tools/button_status.h)
+set(HEADERS include/waypoint_tools/waypoint_type.h)
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 

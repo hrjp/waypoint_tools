@@ -10,6 +10,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseWithCovariance.h>
+#include <nav_msgs/Odometry.h>
 
 #include <iostream>
 #include <string>
@@ -21,8 +22,12 @@ using namespace std;
 ros::Publisher initialpose_pub;
 bool pub_once=false;
 
-void nowpose_callback(const geometry_msgs::PoseWithCovarianceStamped& nowpose){
-    initialpose_pub.publish(nowpose);
+//void nowpose_callback(const geometry_msgs::PoseWithCovarianceStamped& nowpose){
+void nowpose_callback(const nav_msgs::Odometry& nowpose){
+    geometry_msgs::PoseWithCovarianceStamped send_pose;
+    send_pose.header=nowpose.header;
+    send_pose.pose=nowpose.pose;
+    initialpose_pub.publish(send_pose);
     ROS_DEBUG("initialpose published once");
     pub_once=true;
 }
@@ -40,7 +45,7 @@ int main(int argc, char **argv){
     ros::NodeHandle lSubscriber("");
 
     //amcl_pose subscliber
-    ros::Subscriber mcl_cmd_vel_sub = lSubscriber.subscribe("amcl_pose", 50, nowpose_callback);
+    ros::Subscriber mcl_cmd_vel_sub = lSubscriber.subscribe("hdl_localization/odom", 50, nowpose_callback);
 
     //pose publisher
     initialpose_pub = n.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);

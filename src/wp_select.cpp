@@ -73,7 +73,7 @@ void buttons_callback(const std_msgs::Int32 sub_buttons){
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "wpControll");
+    ros::init(argc, argv, "wp_select");
     ros::NodeHandle nh;
     ros::NodeHandle pnh("~");
 
@@ -87,6 +87,8 @@ int main(int argc, char** argv)
     pnh.param<double>("precision_target_deviation", precision_tar_deviation, 0.3);
     double rate;
     pnh.param<double>("loop_rate", rate, 100);
+    bool endless=false;
+    pnh.param<bool>("endless",endless,false);
     //double maxVelocity;
     //pnh.param<double>("maxVelocity", maxVelocity, 1.0);
 
@@ -103,6 +105,7 @@ int main(int argc, char** argv)
     ros::Publisher nowPos_pub = nh.advertise<geometry_msgs::PoseStamped>("nowWpPose", 10);
     ros::Publisher mode_pub = nh.advertise<std_msgs::String>("mode_select/mode", 10);
     ros::Publisher type_pub = nh.advertise<std_msgs::String>("waypoint/now_type", 10);
+    ros::Publisher buttons_pub = nh.advertise<std_msgs::Int32>("buttons", 10);
 
     ros::Rate loop_rate(rate);
 
@@ -160,6 +163,13 @@ int main(int argc, char** argv)
                     //reach last wp point
                     if(poseStampDistance(path.poses[now_wp.data], now_position.toPoseStamped()) <= fin_tar_deviation_){
                         isReach = true;
+                        //waypontが最後まで到達したら停止するか、０に戻るか
+                        if(endless){
+                            std_msgs::Int32 msg;
+                            msg.data = buttons_status_start;
+                            buttons_pub.publish(msg);
+                            now_wp.data=0;
+                        }
                         mode_pub.publish(mode);
                     }
                 }
